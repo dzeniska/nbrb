@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/android/others/nbrb/app/src/main/res/layout/activity_main.xml" value="0.24010416666666667" />
+        <entry key="..\:/android/others/nbrb/app/src/main/res/layout/fragment_course.xml" value="0.25416666666666665" />
+        <entry key="..\:/android/others/nbrb/app/src/main/res/layout/fragment_root.xml" value="0.25416666666666665" />
+        <entry key="..\:/android/others/nbrb/app/src/main/res/layout/fragment_settings.xml" value="0.1796875" />
+        <entry key="..\:/android/others/nbrb/app/src/main/res/layout/item_fragment_cource.xml" value="0.25416666666666665" />
+        <entry key="..\:/android/others/nbrb/app/src/main/res/layout/item_fragment_settings.xml" value="0.25416666666666665" />
+        <entry key="..\:/android/others/nbrb/app/src/main/res/menu/menu_done.xml" value="0.25416666666666665" />
+        <entry key="..\:/android/others/nbrb/app/src/main/res/menu/menu_settings.xml" value="0.25416666666666665" />
+        <entry key="..\:/android/others/nbrb/app/src/main/res/xml/curr.xml" value="0.25416666666666665" />
+        <entry key="..\:/android/others/nbrb/app/src/main/res/xml/currency.xml" value="0.25416666666666665" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

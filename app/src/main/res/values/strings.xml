@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">nbrb</string>
+    <string name="not_courses_error">Не удалось получить курсы валют</string>
+</resources>
