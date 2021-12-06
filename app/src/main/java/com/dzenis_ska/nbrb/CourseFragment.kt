@@ -38,7 +38,7 @@ class CourseFragment : Fragment(R.layout.fragment_course) {
         binding!!.rcViewCourse.adapter = adapter
         binding!!.progressBar.visibility = View.VISIBLE
 
-        mainViewModel.getC(){
+        mainViewModel.getC{
             if(!it) {
                 binding!!.progressBar.visibility = View.GONE
                 binding!!.tvError.visibility = View.VISIBLE

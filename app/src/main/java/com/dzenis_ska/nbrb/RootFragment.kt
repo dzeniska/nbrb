@@ -15,9 +15,6 @@ class RootFragment : Fragment(R.layout.fragment_root) {
 
     var binding: FragmentRootBinding? = null
 
-    private val mainViewModel: MainViewModel by activityViewModels{
-        MainViewModel.MainViewModelFactory((context?.applicationContext as MainApp).database)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -25,7 +22,6 @@ class RootFragment : Fragment(R.layout.fragment_root) {
 
         with(binding!!){
             bCource.setOnClickListener { findNavController().navigate(R.id.courseFragment) }
-            imbSettings.setOnClickListener { findNavController().navigate(R.id.settingsFragment) }
         }
 
     }
