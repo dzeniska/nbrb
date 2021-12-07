@@ -32,7 +32,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text="11.11.2021"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -51,7 +50,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text="11.11.2021"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/space"
             app:layout_constraintTop_toTopOf="parent" />
@@ -67,8 +65,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/rcViewCourse"
-        app:layout_constraintTop_toTopOf="@+id/rcViewCourse"
-        tools:visibility="gone" />
+        app:layout_constraintTop_toTopOf="@+id/rcViewCourse" />
 
     <TextView
         android:id="@+id/tvError"

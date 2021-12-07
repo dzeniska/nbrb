@@ -30,40 +30,55 @@ class CourseFragment : Fragment(R.layout.fragment_course) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentCourseBinding.bind(view)
-        setHasOptionsMenu(true)
+        setHasOptionsMenu(false)
 
         adapter = CourseAdapter()
         val layoutManager = LinearLayoutManager(context)
         binding!!.rcViewCourse.layoutManager = layoutManager
         binding!!.rcViewCourse.adapter = adapter
-        binding!!.progressBar.visibility = View.VISIBLE
 
         mainViewModel.getC{
             if(!it) {
-                binding!!.progressBar.visibility = View.GONE
-                binding!!.tvError.visibility = View.VISIBLE
-                adapter?.courses = emptyList()
-                setHasOptionsMenu(false)
+                progressBarVis()
             }
         }
 
         mainViewModel.listCurrencyTwoDay.observe(viewLifecycleOwner, { list ->
+
             val listCurr = arrayListOf<CurrencyTwoDay>()
+
+            if(list.isNotEmpty())  progressBarVisWithMenu()
+
             list.forEach {
                 if (it.isCheck == 1) listCurr.add(it)
             }
 
             listCurr.sortBy { it.numb }
-            binding!!.progressBar.visibility = View.GONE
             adapter?.courses = listCurr
         })
 
-        with(binding!!){
-            tvDay1.text = mainViewModel.day1
-            tvDay2.text = mainViewModel.day2
-        }
-
+        mainViewModel.dayList.observe(viewLifecycleOwner, {
+            with(binding!!){
+                tvDay1.text = it[0]
+                tvDay2.text = it[1]
+            }
+        })
     }
+
+    private fun progressBarVis() = with(binding!!){
+        progressBar.visibility = View.GONE
+        tvError.visibility = View.VISIBLE
+        rcViewCourse.alpha = 0.2f
+//        adapter?.courses = emptyList()
+        setHasOptionsMenu(false)
+    }
+
+    private fun progressBarVisWithMenu() = with(binding!!){
+        progressBar.visibility = View.GONE
+        tvError.visibility = View.GONE
+        setHasOptionsMenu(true)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_settings, menu)
         super.onCreateOptionsMenu(menu, inflater)
@@ -76,5 +91,11 @@ class CourseFragment : Fragment(R.layout.fragment_course) {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+        mainViewModel.clearDays()
     }
 }

@@ -20,6 +20,7 @@ class RootFragment : Fragment(R.layout.fragment_root) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentRootBinding.bind(view)
 
+
         with(binding!!){
             bCource.setOnClickListener { findNavController().navigate(R.id.courseFragment) }
         }

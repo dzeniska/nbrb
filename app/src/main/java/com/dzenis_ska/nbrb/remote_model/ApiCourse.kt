@@ -31,9 +31,9 @@ interface ApiCourse {
     companion object Factory {
         fun create(): ApiCourse {
             val okHttpClient = OkHttpClient.Builder()
-                .connectTimeout(3, TimeUnit.SECONDS)
-                .writeTimeout(3, TimeUnit.SECONDS)
-                .readTimeout(12, TimeUnit.SECONDS)
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(120, TimeUnit.SECONDS)
                 .build()
 
             val retrofit: Retrofit = Retrofit.Builder()

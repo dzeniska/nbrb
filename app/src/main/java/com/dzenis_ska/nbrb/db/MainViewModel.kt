@@ -23,8 +23,10 @@ class MainViewModel(dataBase: MainDataBase) : ViewModel() {
     val today = TimeManager.getCurrentDay()
     val yesterday = TimeManager.getYesterday()
     val tomorrow = TimeManager.getTomorrow()
-    var day1: String = ""
-    var day2: String = ""
+
+
+    private val _dayList = MutableLiveData<ArrayList<String>>()
+    val dayList: LiveData<ArrayList<String>> = _dayList
 
     private val _listCurr = MutableLiveData<ArrayList<CurrencyTwoDay>>()
     val listCurr: LiveData<ArrayList<CurrencyTwoDay>> = _listCurr
@@ -39,6 +41,10 @@ class MainViewModel(dataBase: MainDataBase) : ViewModel() {
         }
     }
 
+    fun clearDays(){
+        _dayList.value = arrayListOf("", "")
+    }
+
     fun getC(callback: (bool: Boolean) -> Unit) {
         getListFirst()
         viewModelScope.launch {
@@ -47,9 +53,8 @@ class MainViewModel(dataBase: MainDataBase) : ViewModel() {
 
             var isCheck: Int
             var numb = 0
-            if(text != EXCEPTION || text.length > 100){
-                day1 = TimeManager.dayToday()
-                day2 = TimeManager.dayTomorrow()
+            if(text != EXCEPTION && text.length > 100){
+
                 val listTomorrow = arrayListOf<Currency>()
                     getListCurr(tomorrow){ list, bool ->
                         if(bool) {
@@ -70,6 +75,7 @@ class MainViewModel(dataBase: MainDataBase) : ViewModel() {
                         }
                     }
                 if(isGetList == 2) {
+                    _dayList.value = arrayListOf(TimeManager.dayToday(), TimeManager.dayTomorrow())
                     val listCurr = arrayListOf<CurrencyTwoDay>()
                     for (i in listTomorrow.indices) {
                         val cC = listTomorrow[i].charCode
@@ -104,10 +110,7 @@ class MainViewModel(dataBase: MainDataBase) : ViewModel() {
                     isGetList = 0
                     callback(false)
                 }
-
             } else {
-                day1 = TimeManager.dayYesterday()
-                day2 = TimeManager.dayToday()
                 val listToday = arrayListOf<Currency>()
                 getListCurr(today){ list, bool ->
                     if(bool) {
@@ -127,6 +130,7 @@ class MainViewModel(dataBase: MainDataBase) : ViewModel() {
                     }
                 }
                 if(isGetList == 2) {
+                    _dayList.value = arrayListOf(TimeManager.dayYesterday(), TimeManager.dayToday())
                     val listCurr = arrayListOf<CurrencyTwoDay>()
                     for (i in listToday.indices) {
                         val cC = listToday[i].charCode
@@ -145,8 +149,6 @@ class MainViewModel(dataBase: MainDataBase) : ViewModel() {
                             )
                         )
                     }
-                    Log.d("!!!listCurrencyTwoDay", "${listCurrencyTwoDay.value}")
-                    Log.d("!!!listCurrencyTwoDay", "${listFirst.size}")
 
                     isGetList = 0
                     if (listFirst.isEmpty()) {
