@@ -4,10 +4,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object TimeManager {
-//    fun getCurrentDay(): String{
-//        val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
-//        return formatter.format(Calendar.getInstance().time)
-//    }
+
     fun getTomorrow(): String{
     val sdf = SimpleDateFormat("MM/dd/yyyy")
     val resultDate = Date(System.currentTimeMillis() + 86400000)

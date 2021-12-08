@@ -47,7 +47,6 @@ class CourseFragment : Fragment(R.layout.fragment_course) {
 
             val listCurr = arrayListOf<CurrencyTwoDay>()
 
-            if(list.isNotEmpty())  progressBarVisWithMenu()
 
             list.forEach {
                 if (it.isCheck == 1) listCurr.add(it)
@@ -58,6 +57,11 @@ class CourseFragment : Fragment(R.layout.fragment_course) {
         })
 
         mainViewModel.dayList.observe(viewLifecycleOwner, {
+            if(it[0].isNotEmpty())  {
+                progressBarVisWithMenu()
+                binding!!.rcViewCourse.alpha = 1.0f
+            }
+
             with(binding!!){
                 tvDay1.text = it[0]
                 tvDay2.text = it[1]
@@ -68,7 +72,7 @@ class CourseFragment : Fragment(R.layout.fragment_course) {
     private fun progressBarVis() = with(binding!!){
         progressBar.visibility = View.GONE
         tvError.visibility = View.VISIBLE
-        rcViewCourse.alpha = 0.2f
+
 //        adapter?.courses = emptyList()
         setHasOptionsMenu(false)
     }
