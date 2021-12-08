@@ -3,6 +3,8 @@ package com.dzenis_ska.nbrb.db
 import android.util.Log
 import androidx.lifecycle.*
 import com.dzenis_ska.nbrb.remote_model.ApiCourse
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
@@ -13,6 +15,7 @@ class MainViewModel(dataBase: MainDataBase) : ViewModel() {
     var isGetList: Int = 0
 
     private var listFirst = emptyList<CurrencyTwoDay>()
+
     private fun getListFirst() {
         viewModelScope.launch {
             listFirst = dao.getAll()
@@ -44,18 +47,23 @@ class MainViewModel(dataBase: MainDataBase) : ViewModel() {
     fun clearDays(){
         _dayList.value = arrayListOf("", "")
     }
+    var isCompl: Boolean = true
 
     fun getC(callback: (bool: Boolean) -> Unit) {
+
+        Log.d("!!!ex", "${isCompl}")
         getListFirst()
-        viewModelScope.launch {
 
-            val text = getTextCurrency(tomorrow)
+        if(isCompl){
+            isCompl = false
+            viewModelScope.launch {
+                val text = getTextCurrency(tomorrow)
 
-            var isCheck: Int
-            var numb = 0
-            if(text != EXCEPTION && text.length > 100){
+                var isCheck: Int
+                var numb = 0
+                if(text != EXCEPTION && text.length > 100){
 
-                val listTomorrow = arrayListOf<Currency>()
+                    val listTomorrow = arrayListOf<Currency>()
                     getListCurr(tomorrow){ list, bool ->
                         if(bool) {
                             isGetList++
@@ -65,7 +73,7 @@ class MainViewModel(dataBase: MainDataBase) : ViewModel() {
                         }
                     }
 
-                val listToday = arrayListOf<Currency>()
+                    val listToday = arrayListOf<Currency>()
                     getListCurr(today){ list, bool ->
                         if(bool) {
                             isGetList++
@@ -74,97 +82,102 @@ class MainViewModel(dataBase: MainDataBase) : ViewModel() {
                             isGetList--
                         }
                     }
-                if(isGetList == 2) {
-                    _dayList.value = arrayListOf(TimeManager.dayToday(), TimeManager.dayTomorrow())
-                    val listCurr = arrayListOf<CurrencyTwoDay>()
-                    for (i in listTomorrow.indices) {
-                        val cC = listTomorrow[i].charCode
-                        isCheck = if (cC == "USD" || cC == "EUR" || cC == "RUB") 1 else 0
-                        listCurr.add(
-                            CurrencyTwoDay(
-                                listTomorrow[i].id,
-                                listTomorrow[i].numCode,
-                                listTomorrow[i].charCode,
-                                listTomorrow[i].scale,
-                                listTomorrow[i].name,
-                                listTomorrow[i].rate,
-                                listToday[i].rate,
-                                isCheck,
-                                numb++
-                            )
-                        )
-                    }
-                    isGetList = 0
-                    if (listFirst.isEmpty()) {
-                        dao.insertCourses(listCurr)
-                    } else {
-                        listCurr.forEach { updateRate ->
-                            dao.insertOneCourse(
-                                updateRate.rate,
-                                updateRate.rate_yesterday,
-                                updateRate.id
+                    if(isGetList == 2) {
+                        _dayList.value = arrayListOf(TimeManager.dayToday(), TimeManager.dayTomorrow())
+                        val listCurr = arrayListOf<CurrencyTwoDay>()
+                        for (i in listTomorrow.indices) {
+                            val cC = listTomorrow[i].charCode
+                            isCheck = if (cC == "USD" || cC == "EUR" || cC == "RUB") 1 else 0
+                            listCurr.add(
+                                CurrencyTwoDay(
+                                    listTomorrow[i].id,
+                                    listTomorrow[i].numCode,
+                                    listTomorrow[i].charCode,
+                                    listTomorrow[i].scale,
+                                    listTomorrow[i].name,
+                                    listTomorrow[i].rate,
+                                    listToday[i].rate,
+                                    isCheck,
+                                    numb++
+                                )
                             )
                         }
+                        isGetList = 0
+                        if (listFirst.isEmpty()) {
+                            dao.insertCourses(listCurr)
+                            isCompl = true
+                        } else {
+                            listCurr.forEach { updateRate ->
+                                dao.insertOneCourse(
+                                    updateRate.rate,
+                                    updateRate.rate_yesterday,
+                                    updateRate.id
+                                )
+                            }
+                            isCompl = true
+                        }
+                    } else {
+                        isGetList = 0
+                        callback(false)
                     }
                 } else {
-                    isGetList = 0
-                    callback(false)
-                }
-            } else {
-                val listToday = arrayListOf<Currency>()
-                getListCurr(today){ list, bool ->
-                    if(bool) {
-                        isGetList++
-                        listToday.addAll(list)
-                    } else {
-                        isGetList--
+                    val listToday = arrayListOf<Currency>()
+                    getListCurr(today){ list, bool ->
+                        if(bool) {
+                            isGetList++
+                            listToday.addAll(list)
+                        } else {
+                            isGetList--
+                        }
                     }
-                }
-                val listYesterday = arrayListOf<Currency>()
-                getListCurr(yesterday){  list, bool ->
-                    if(bool) {
-                        isGetList++
-                        listYesterday.addAll(list)
-                    } else {
-                        isGetList--
+                    val listYesterday = arrayListOf<Currency>()
+                    getListCurr(yesterday){  list, bool ->
+                        if(bool) {
+                            isGetList++
+                            listYesterday.addAll(list)
+                        } else {
+                            isGetList--
+                        }
                     }
-                }
-                if(isGetList == 2) {
-                    _dayList.value = arrayListOf(TimeManager.dayYesterday(), TimeManager.dayToday())
-                    val listCurr = arrayListOf<CurrencyTwoDay>()
-                    for (i in listToday.indices) {
-                        val cC = listToday[i].charCode
-                        isCheck = if (cC == "USD" || cC == "EUR" || cC == "RUB") 1 else 0
-                        listCurr.add(
-                            CurrencyTwoDay(
-                                listToday[i].id,
-                                listToday[i].numCode,
-                                listToday[i].charCode,
-                                listToday[i].scale,
-                                listToday[i].name,
-                                listToday[i].rate,
-                                listYesterday[i].rate,
-                                isCheck,
-                                numb++
+                    if(isGetList == 2) {
+                        _dayList.value = arrayListOf(TimeManager.dayYesterday(), TimeManager.dayToday())
+                        val listCurr = arrayListOf<CurrencyTwoDay>()
+                        for (i in listToday.indices) {
+                            val cC = listToday[i].charCode
+                            isCheck = if (cC == "USD" || cC == "EUR" || cC == "RUB") 1 else 0
+                            listCurr.add(
+                                CurrencyTwoDay(
+                                    listToday[i].id,
+                                    listToday[i].numCode,
+                                    listToday[i].charCode,
+                                    listToday[i].scale,
+                                    listToday[i].name,
+                                    listToday[i].rate,
+                                    listYesterday[i].rate,
+                                    isCheck,
+                                    numb++
+                                )
                             )
-                        )
-                    }
+                        }
 
-                    isGetList = 0
-                    if (listFirst.isEmpty()) {
-                        dao.insertCourses(listCurr)
-                    } else {
-                        listCurr.forEach { updateRate ->
-                            dao.insertOneCourse(
-                                updateRate.rate,
-                                updateRate.rate_yesterday,
-                                updateRate.id
-                            )
+                        isGetList = 0
+                        if (listFirst.isEmpty()) {
+                            dao.insertCourses(listCurr)
+                            isCompl = true
+                        } else {
+                            listCurr.forEach { updateRate ->
+                                dao.insertOneCourse(
+                                    updateRate.rate,
+                                    updateRate.rate_yesterday,
+                                    updateRate.id
+                                )
+                            }
+                            isCompl = true
                         }
+                    } else {
+                        isGetList = 0
+                        callback(false)
                     }
-                } else {
-                    isGetList = 0
-                    callback(false)
                 }
             }
         }
@@ -185,7 +198,7 @@ class MainViewModel(dataBase: MainDataBase) : ViewModel() {
     private suspend fun getTextCurrency(day: String): String{
         return try{
             val text = apiCourse.getCourse(day)
-            Log.d("!!!ex", "${text}")
+            Log.d("!!!ex", "${text.substring(0..100)}")
             text
         } catch (e : Exception){
             Log.d("!!!ex", e.toString())
